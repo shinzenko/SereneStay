@@ -20,7 +20,7 @@ const Login = () => {
       navigate("/");
     },
     onError: async (error) => {
-      console.log({ message: error.message, type: "ERROR" });
+      showToast({ message: error.message, type: "ERROR" });
     },
   });
 
