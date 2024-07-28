@@ -6,11 +6,15 @@ import SearchResultsCard from "../components/SearchResultsCard";
 import Pagination from "../components/Pagination";
 import StarRatingFilter from "../components/starRatingFilter";
 import HotelTypesFilter from "../components/HotelTypesFilters";
+import FacilityFilter from "../components/FacilityFilter";
+import PriceFilter from "../components/PriceFilter";
 const Search = () => {
   const search = useSearchContext();
   const [page, setPage] = useState(1);
   const [selectedStars, setSelectedStars] = useState([]);
   const [selectedHotelTypes, setSelectedHotelTypes] = useState([]);
+  const [selectedFacilities, setSelectedFacilities] = useState([]);
+  const [selectedPrice, setSelectedPrice] = useState([]);
   const handleStarsChange = (event) => {
     const starRating = event.target.value;
     setSelectedStars((prev) =>
@@ -27,6 +31,15 @@ const Search = () => {
         : prev.filter((type) => type !== hotelTypes)
     );
   };
+  const handleFacilityFilter = (event) => {
+    const facility = event.target.value;
+    setSelectedFacilities((prev) =>
+      event.target.checked
+        ? [...prev, facility]
+        : prev.filter((fac) => facility !== fac)
+    );
+  };
+
   const searchParams = {
     destination: search.destination,
     checkIn: search.checkIn.toISOString(),
@@ -36,8 +49,8 @@ const Search = () => {
     page: page.toString(),
     stars: selectedStars,
     types: selectedHotelTypes,
-    // facilities: selectedFacilities,
-    // maxPrice: selectedPrice?.toString(),
+    facilities: selectedFacilities,
+    maxPrice: selectedPrice?.toString(),
     // sortOption,
   };
   const { data: hotelData } = useQuery(["searchHotels", searchParams], () =>
@@ -57,6 +70,14 @@ const Search = () => {
           <HotelTypesFilter
             selectedHotelTypes={selectedHotelTypes}
             onChange={handleHotelTypeChange}
+          />
+          <FacilityFilter
+            selectedFacility={selectedFacilities}
+            onChange={handleFacilityFilter}
+          />
+          <PriceFilter
+            selectedPrice={selectedPrice}
+            onChange={(val) => setSelectedPrice(val)}
           />
         </div>
       </div>
