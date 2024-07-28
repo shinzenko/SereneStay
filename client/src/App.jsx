@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layouts from "./layouts/Layouts";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -14,6 +9,7 @@ import EditHotel from "./pages/EditHotel";
 import Search from "./pages/Search";
 import Details from "./pages/Details";
 import Booking from "./pages/Booking";
+import MyBookings from "./pages/MyBookings";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -103,6 +99,18 @@ function App() {
               element={
                 <Layouts>
                   <Booking />
+                </Layouts>
+              }
+            />
+          </>
+        )}
+        {isLoggedIn && (
+          <>
+            <Route
+              path="/my-bookings"
+              element={
+                <Layouts>
+                  <MyBookings />
                 </Layouts>
               }
             />
