@@ -54,6 +54,15 @@ router.get("/search", async (req, res) => {
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.get("/", async (req, res) => {
+  try {
+    const hotels = await HotelModel.find().sort("-lastUpdated");
+    res.json(hotels);
+  } catch (err) {
+    console.log("error", err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 
 router.get(
   "/:id",
