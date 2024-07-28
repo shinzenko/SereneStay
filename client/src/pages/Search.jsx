@@ -3,9 +3,20 @@ import { useSearchContext } from "../context/SearchContext";
 import * as apiClient from "../api-client";
 import { useState } from "react";
 import SearchResultsCard from "../components/SearchResultsCard";
+import Pagination from "../components/Pagination";
+import StarRatingFilter from "../components/starRatingFilter";
 const Search = () => {
   const search = useSearchContext();
   const [page, setPage] = useState(1);
+  const [selectedStars, setSelectedStars] = useState([]);
+  const handleStarsChange = (event) => {
+    const starRating = event.target.value;
+    setSelectedStars((prev) =>
+      event.target.checked
+        ? [...prev, starRating]
+        : prev.filter((star) => star !== starRating)
+    );
+  };
   const searchParams = {
     destination: search.destination,
     checkIn: search.checkIn.toISOString(),
@@ -13,6 +24,11 @@ const Search = () => {
     adultCount: search.adultCount.toString(),
     childCount: search.childCount.toString(),
     page: page.toString(),
+    stars: selectedStars,
+    // types: selectedHotelTypes,
+    // facilities: selectedFacilities,
+    // maxPrice: selectedPrice?.toString(),
+    // sortOption,
   };
   const { data: hotelData } = useQuery(["searchHotels", searchParams], () =>
     apiClient.searchHotels(searchParams)
@@ -24,6 +40,10 @@ const Search = () => {
           <h3 className="text-lg font-semibold border-b border-slate-300 pb-5">
             Filter by:
           </h3>
+          <StarRatingFilter
+            selectedStars={selectedStars}
+            onChange={handleStarsChange}
+          />
         </div>
       </div>
       <div className="flex flex-col gap-5">
@@ -32,11 +52,17 @@ const Search = () => {
             {hotelData?.pagination.total} Hotels found
             {search.destination ? ` in ${search.destination}` : ""}
           </span>
-          {/* TODO Sort option*/}
         </div>
         {hotelData?.data.map((hotel, index) => (
           <SearchResultsCard key={index} hotel={hotel} />
         ))}
+        <div>
+          <Pagination
+            page={hotelData?.pagination.page || 1}
+            pages={hotelData?.pagination.pages || 1}
+            onPageChange={(page) => setPage(page)}
+          />
+        </div>
       </div>
     </div>
   );
