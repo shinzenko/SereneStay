@@ -1,5 +1,6 @@
 import express from "express";
 import HotelModel from "../models/hotel.model.js";
+import { param, validationResult } from "express-validator";
 
 const router = express.Router();
 
@@ -30,7 +31,8 @@ router.get("/search", async (req, res) => {
       .sort(sortOptions)
       .skip(skip)
       .limit(pageSize);
-
+    const testHotel = await HotelModel.find(query);
+    console.log(query);
     const total = await HotelModel.countDocuments(query);
 
     const response = {
@@ -49,9 +51,30 @@ router.get("/search", async (req, res) => {
   }
 });
 
+router.get(
+  "/:id",
+  [param("id").notEmpty().withMessage("Hotel ID is required")],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id.toString();
+
+    try {
+      const hotel = await HotelModel.findById(id);
+      res.json(hotel);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Error fetching hotel" });
+    }
+  }
+);
+
 const constructSearchQuery = (queryParams) => {
   let constructedQuery = {};
-  console.log(queryParams);
+
   if (queryParams.destination) {
     constructedQuery.$or = [
       { city: new RegExp(queryParams.destination, "i") },

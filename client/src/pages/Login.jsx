@@ -2,10 +2,11 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client";
 import { useAppContext } from "../context/AppContext";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 const Login = () => {
   const queryClient = useQueryClient();
   const { showToast } = useAppContext();
+  const location = useLocation();
   const navigate = useNavigate();
   const {
     register,
@@ -17,7 +18,7 @@ const Login = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries("validateToken"); // invalidate token cache to fetch new token when login is successful
       showToast({ message: "Signed In", type: "SUCCESS" });
-      navigate("/");
+      navigate(location.state?.from?.pathname || "/");
     },
     onError: async (error) => {
       showToast({ message: error.message, type: "ERROR" });
