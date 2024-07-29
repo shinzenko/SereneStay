@@ -169,7 +169,7 @@ export const createPaymentIntent = async (hotelId, numberOfNights) => {
       },
     }
   );
-
+  console.log("done");
   if (!response.ok) {
     throw new Error("Error fetching payment intent");
   }
